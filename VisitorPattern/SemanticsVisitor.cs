@@ -335,6 +335,7 @@ namespace ASTBuilder
                 attr.TypeRef = new ErrorTypeDescriptor();
             }
             table.incrNestLevel();
+            node.AttributesRef = attr;
             body.Accept(this);
             ((ClassTypeDescriptor)attr.TypeRef).Names = table.decrNestLevel();
             SetCurrentClass(null);
@@ -361,6 +362,7 @@ namespace ASTBuilder
                 attr.Signature = new SignatureTypeDescriptor(param.Child);
             }
             name.AttributesRef = attr;
+            node.AttributesRef = attr;
             MethodAttributes oldCurrentMethod = GetCurrentMethod();
             SetCurrentMethod(attr);
             if(param != null)

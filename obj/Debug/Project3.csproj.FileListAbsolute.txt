@@ -10,3 +10,9 @@ C:\Users\Edward\Documents\Masters in CS\CPSC 5400 Compiler Principles and Techni
 C:\Users\Edward\Documents\Masters in CS\CPSC 5400 Compiler Principles and Techniques\project3 - starter solution\bin\Debug\TCCL-AST.pdb
 C:\Users\Edward\Documents\Masters in CS\CPSC 5400 Compiler Principles and Techniques\project3 - starter solution\obj\Debug\TCCL-AST.exe
 C:\Users\Edward\Documents\Masters in CS\CPSC 5400 Compiler Principles and Techniques\project3 - starter solution\obj\Debug\TCCL-AST.pdb
+C:\Users\Edward\Source\Repos\CompilersProject\bin\Debug\TCCL-AST.exe.config
+C:\Users\Edward\Source\Repos\CompilersProject\bin\Debug\TCCL-AST.exe
+C:\Users\Edward\Source\Repos\CompilersProject\bin\Debug\TCCL-AST.pdb
+C:\Users\Edward\Source\Repos\CompilersProject\obj\Debug\Project3.csprojResolveAssemblyReference.cache
+C:\Users\Edward\Source\Repos\CompilersProject\obj\Debug\TCCL-AST.exe
+C:\Users\Edward\Source\Repos\CompilersProject\obj\Debug\TCCL-AST.pdb

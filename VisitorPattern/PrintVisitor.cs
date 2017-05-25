@@ -30,6 +30,10 @@ namespace ASTBuilder
             {
                 node.TypeRef.PrintType();
             }
+            else if(node.AttributesRef != null && node.AttributesRef.TypeRef.GetType() != typeof(ASTBuilder.ErrorTypeDescriptor))
+            {
+                node.AttributesRef.TypeRef.PrintType();
+            }
             else
                 Console.WriteLine();
                 
