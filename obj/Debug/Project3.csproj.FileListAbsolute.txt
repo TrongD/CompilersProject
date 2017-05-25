@@ -1,0 +1,12 @@
+C:\Users\Richard LeBlanc\Dropbox\CPSC 4400\Code for studios and projects\project3 - My version\obj\Debug\Project3.csprojResolveAssemblyReference.cache
+C:\Users\Richard LeBlanc\Dropbox\CPSC 4400\Code for studios and projects\project3 - My version\obj\Debug\TCCL-AST.exe
+C:\Users\Richard LeBlanc\Dropbox\CPSC 4400\Code for studios and projects\project3 - My version\obj\Debug\TCCL-AST.pdb
+C:\Users\Richard LeBlanc\Dropbox\CPSC 4400\Code for studios and projects\project3 - My version\bin\Debug\TCCL-AST.exe.config
+C:\Users\Richard LeBlanc\Dropbox\CPSC 4400\Code for studios and projects\project3 - My version\bin\Debug\TCCL-AST.exe
+C:\Users\Richard LeBlanc\Dropbox\CPSC 4400\Code for studios and projects\project3 - My version\bin\Debug\TCCL-AST.pdb
+C:\Users\Edward\Documents\Masters in CS\CPSC 5400 Compiler Principles and Techniques\project3 - starter solution\obj\Debug\Project3.csprojResolveAssemblyReference.cache
+C:\Users\Edward\Documents\Masters in CS\CPSC 5400 Compiler Principles and Techniques\project3 - starter solution\bin\Debug\TCCL-AST.exe.config
+C:\Users\Edward\Documents\Masters in CS\CPSC 5400 Compiler Principles and Techniques\project3 - starter solution\bin\Debug\TCCL-AST.exe
+C:\Users\Edward\Documents\Masters in CS\CPSC 5400 Compiler Principles and Techniques\project3 - starter solution\bin\Debug\TCCL-AST.pdb
+C:\Users\Edward\Documents\Masters in CS\CPSC 5400 Compiler Principles and Techniques\project3 - starter solution\obj\Debug\TCCL-AST.exe
+C:\Users\Edward\Documents\Masters in CS\CPSC 5400 Compiler Principles and Techniques\project3 - starter solution\obj\Debug\TCCL-AST.pdb
