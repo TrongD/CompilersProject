@@ -337,6 +337,8 @@ namespace ASTBuilder
             table.incrNestLevel();
             node.AttributesRef = attr;
             body.Accept(this);
+            Console.WriteLine("Symbol table after Class " + ((Identifier)name).Name);
+            table.PrintTable();
             ((ClassTypeDescriptor)attr.TypeRef).Names = table.decrNestLevel();
             SetCurrentClass(null);
         }
@@ -369,6 +371,8 @@ namespace ASTBuilder
                 param.Accept(this);
             body.Accept(this);
             SetCurrentMethod(oldCurrentMethod);
+            Console.WriteLine("Symbol table after Class " + ((Identifier)name).Name);
+            table.PrintTable();
             attr.Locals = table.decrNestLevel();
         }
     }

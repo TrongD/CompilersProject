@@ -12,13 +12,14 @@ namespace ASTBuilder
         {
             var parser = new TCCLParser();
             string name = "";
-            Console.Write("Enter FileName here:    ");
-            name = Console.ReadLine();
-            Console.WriteLine("Parsing file " + name);
-            parser.Parse(name);
-            Console.WriteLine("Parsing complete");
-            Console.Read();
-
+            while (true)
+            {
+                Console.Write("Enter a file name: ");
+                name = Console.ReadLine();
+                Console.WriteLine("Parsing file " + name);
+                parser.Parse(name + ".txt");
+                Console.WriteLine("Parsing complete");
+            }
         }
     }
 }

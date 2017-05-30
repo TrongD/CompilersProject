@@ -143,11 +143,14 @@ namespace ASTBuilder
         }
         public void PrintTable()
         {
+            Attributes attr; 
             foreach(Hashtable table in SymTblList)
             {
                 foreach (object item in table.Keys)
                 {
-                    Console.WriteLine((string)item);
+                    attr = lookup((string)item);
+                    Console.Write((string)item + "   ");
+                    attr.TypeRef.PrintType();
                 }
             }
             Console.WriteLine();
