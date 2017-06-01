@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  ROXACOMP
-// DateTime: 5/31/2017 1:18:18 PM
+// DateTime: 6/1/2017 7:39:38 AM
 // UserName: Edward
-// Input file <TCCL.grammar.y - 5/31/2017 1:18:16 PM>
+// Input file <TCCL.grammar.y - 6/1/2017 7:39:37 AM>
 
 // options: no-lines gplex
 
@@ -595,7 +595,7 @@ internal partial class TCCLParser: ShiftReduceParser<AbstractNode, LexLocation>
 { CurrentSemanticValue = ValueStack[ValueStack.Depth-1]; }
         break;
       case 72: // ArgumentList -> ArgumentList, COMMA, Expression
-{ ValueStack[ValueStack.Depth-3].adoptChildren(ValueStack[ValueStack.Depth-1]); CurrentSemanticValue = ValueStack[ValueStack.Depth-3]; }
+{ ValueStack[ValueStack.Depth-3].makeSibling(ValueStack[ValueStack.Depth-1]); CurrentSemanticValue = ValueStack[ValueStack.Depth-3]; }
         break;
       case 73: // Expression -> QualifiedName, EQUALS, Expression
 { CurrentSemanticValue = MakeExpression(ValueStack[ValueStack.Depth-3],ValueStack[ValueStack.Depth-1], (int)Token.EQUALS); }

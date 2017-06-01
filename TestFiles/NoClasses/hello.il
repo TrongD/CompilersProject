@@ -5,7 +5,7 @@
 {
 .entrypoint
 .maxstack 100
-.locals init (int32, int32, int32, int32)
+.locals init (int32, int32)
 ldstr "Hello, World"
 call void [mscorlib]System.Console::WriteLine(string)
 

@@ -195,7 +195,7 @@ ReturnStatement				:	RETURN Expression SEMICOLON																{ $$ = $2; }
 							;
 
 ArgumentList				:	Expression																				{ $$ = $1; }
-							|   ArgumentList COMMA Expression															{ $1.adoptChildren($3); $$ = $1; }
+							|   ArgumentList COMMA Expression															{ $1.makeSibling($3); $$ = $1; }
 							;
 
 
