@@ -9,6 +9,7 @@ namespace ASTBuilder
 {
     public abstract class TypeDescriptor
     {
+        public string type;
         public void PrintType()
         {
             Console.WriteLine("    " + this.GetType().ToString());
@@ -17,16 +18,38 @@ namespace ASTBuilder
     public class IntegerTypeDescriptor : TypeDescriptor
     {
         int value;
+        public IntegerTypeDescriptor()
+        {
+            type = "int32";
+        }
+
+        public int Value { get { return value; } set { this.value = value; } }
+    }
+    public class StringTypeDescriptor : TypeDescriptor
+    {
+        int value;
+        public StringTypeDescriptor()
+        {
+            type = "string";
+        }
+
         public int Value { get { return value; } set { this.value = value; } }
     }
     public class BooleanTypeDescriptor : TypeDescriptor
     {
         bool value;
+        public BooleanTypeDescriptor()
+        {
+            type = "bool";
+        }
         public bool Value { get { return value; } set { this.value = value; } }
     }
     public class VoidTypeDescriptor : TypeDescriptor
     {
-
+        public VoidTypeDescriptor()
+        {
+            type = "void";
+        }
     }
     public class JavaInternalTypeDescriptor : TypeDescriptor
     {
@@ -63,11 +86,11 @@ namespace ASTBuilder
     public class SignatureTypeDescriptor : TypeDescriptor
     {
         private AbstractNode firstParam;
-        public SignatureTypeDescriptor(AbstractNode firstParam)
+        public SignatureTypeDescriptor(AbstractNode firstParam=null)
         {
             this.firstParam = firstParam;
         }
-        public AbstractNode Parameters { get { return firstParam; } }
+        public AbstractNode Parameters { get { return firstParam; } set { firstParam = value; } }
     }
     public class ClassTypeDescriptor : TypeDescriptor
     {

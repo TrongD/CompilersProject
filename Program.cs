@@ -17,7 +17,7 @@ namespace ASTBuilder
                 Console.Write("Enter a file name: ");
                 name = Console.ReadLine();
                 Console.WriteLine("Parsing file " + name);
-                parser.Parse(name + ".txt");
+                parser.Parse(name);
                 Console.WriteLine("Parsing complete");
             }
         }

@@ -7,7 +7,34 @@ using System.Threading.Tasks;
 
 namespace ASTBuilder
 {
-    public class SemanticsVisitor : IReflectiveVisitor
+    public class SemanticNodeVisitor : IReflectiveVisitor
+    {
+        public virtual void Visit(dynamic node)
+        {
+            this.VisitNode(node);
+        }
+        public virtual void VisitNode(AbstractNode node)
+        {
+            AbstractNode child = node.Child;
+            while (child != null)
+            {
+                child.Accept(this);
+                node.TypeRef = child.TypeRef;
+                child = child.Sib;
+            };
+        }
+        public virtual void VisitChildren(AbstractNode node)
+        {
+            AbstractNode child = node.Child;
+            while (child != null)
+            {
+                child.Accept(this);
+                node.TypeRef = child.TypeRef;
+                child = child.Sib;
+            };
+        }
+    }
+    public class SemanticsVisitor : SemanticNodeVisitor, IReflectiveVisitor
     {
         // This method is the key to implenting the Reflective Visitor pattern
         // in C#, using the 'dynamic' type specification to accept any node type.
@@ -33,7 +60,7 @@ namespace ASTBuilder
         {
             return currentMethod;
         }
-        public virtual void Visit(dynamic node)
+        public override void Visit(dynamic node)
         {
             this.VisitNode(node);
         }
@@ -48,17 +75,8 @@ namespace ASTBuilder
             TopDeclVisitor visitor = new TopDeclVisitor();
             node.Accept(visitor);
         }
-        public void VisitChildren(AbstractNode node)
-        {
-            AbstractNode child = node.Child;
-            while (child != null)
-            {
-                child.Accept(this);
-                node.TypeRef = child.TypeRef;
-                child = child.Sib;
-            };
-        }
-        public void VisitNode(AbstractNode node)
+
+        public override void VisitNode(AbstractNode node)
         {
             AbstractNode child = node.Child;
             TopDeclVisitor visitor = new TopDeclVisitor();
@@ -161,6 +179,10 @@ namespace ASTBuilder
         public void VisitNode(ConstantValue node)
         {
             node.TypeRef = table.lookup("INT").TypeRef;
+        }
+        public void VisitNode(StringValue node)
+        {
+            node.TypeRef = table.lookup("String").TypeRef;
         }
         bool IsDataObject(Attributes attr)
         {
@@ -358,10 +380,11 @@ namespace ASTBuilder
             attr.IsDefinedIn = GetCurrentClass();                
             table.enter(((Identifier)name).Name, attr);
             table.incrNestLevel();
+            attr.Signature = new SignatureTypeDescriptor();
             if (param != null)
             {
                 param.Accept(typeVisitor);
-                attr.Signature = new SignatureTypeDescriptor(param.Child);
+                ((SignatureTypeDescriptor)attr.Signature).Parameters = param;
             }
             name.AttributesRef = attr;
             node.AttributesRef = attr;
@@ -371,7 +394,7 @@ namespace ASTBuilder
                 param.Accept(this);
             body.Accept(this);
             SetCurrentMethod(oldCurrentMethod);
-            Console.WriteLine("Symbol table after Class " + ((Identifier)name).Name);
+            Console.WriteLine("Symbol table after Method " + ((Identifier)name).Name);
             table.PrintTable();
             attr.Locals = table.decrNestLevel();
         }

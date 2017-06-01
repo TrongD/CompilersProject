@@ -71,8 +71,10 @@ namespace ASTBuilder
             attr = new TypeAttributes(new JavaInternalTypeDescriptor());
             enter("print", attr);
             attr = new TypeAttributes(new MSCorLibTypeDescriptor());
-            enter("WriteLine", attr);
+            enter("Write", attr);
             attr = new TypeAttributes(new MSCorLibTypeDescriptor());
+            enter("WriteLine", attr);
+            attr = new TypeAttributes(new StringTypeDescriptor());
             enter("String", attr);
         }
         public override int CurrentNestLevel

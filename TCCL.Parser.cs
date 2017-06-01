@@ -11,10 +11,12 @@ namespace ASTBuilder
 
         public void Parse(string filename)
         {
-            this.Scanner = new TCCLScanner(File.OpenRead(filename));
+            GlobalVar.PATH = Directory.GetCurrentDirectory() +"\\"+ filename + ".il";
+            this.Scanner = new TCCLScanner(File.OpenRead(filename + ".txt"));
             this.Parse();
             //   PrintTree();
             DoSemantics();
+            GenerateCode(filename);
             PrintTree();
         }
         public void Parse(Stream strm)
@@ -37,6 +39,27 @@ namespace ASTBuilder
             SemanticsVisitor visitor = new SemanticsVisitor();
             Console.WriteLine("Starting semantic checking");
             visitor.CheckSemantics(CurrentSemanticValue);
+
+        }
+        public void GenerateCode(string filename)
+        {
+            TopVisitor visitor = new TopVisitor();
+            Console.WriteLine("Starting code generation");
+            //Path found in TopVisitor
+            if (File.Exists(GlobalVar.PATH))
+            {
+                File.Delete(GlobalVar.PATH);
+            }
+            using (FileStream fs = File.Create(GlobalVar.PATH))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    sw.WriteLine("//Generated Code in CIL");
+                    sw.WriteLine(".assembly extern mscorlib {} ");
+                    sw.WriteLine(".assembly " + filename + " {}");
+                }
+            }
+            visitor.Visit(CurrentSemanticValue);
 
         }
         //

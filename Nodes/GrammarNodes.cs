@@ -265,6 +265,21 @@ namespace ASTBuilder
             }
         }
     }
+    public class StringValue : AbstractNode
+    {
+        private string value;
+        public StringValue(string value)
+        {
+            this.value = value;
+        }
+        public string Value
+        {
+            get
+            {
+                return value;
+            }
+        }
+    }
     public class PrimitiveType : AbstractNode
     {
         private string type;

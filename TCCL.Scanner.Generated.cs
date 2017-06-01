@@ -6,9 +6,9 @@
 //
 //  GPLEX Version:  1.2.2
 //  Machine:  ROXACOMP
-//  DateTime: 5/23/2017 9:09:07 AM
+//  DateTime: 5/31/2017 1:18:18 PM
 //  UserName: Edward
-//  GPLEX input file <TCCL.analyzer.lex - 5/11/2017 10:46:59 AM>
+//  GPLEX input file <TCCL.analyzer.lex - 5/30/2017 9:05:10 AM>
 //  GPLEX frame file <embedded resource>
 //
 //  Option settings: verbose, parser, stack, minimize
@@ -1420,7 +1420,7 @@ stringval.Append(yytext);
         case 113: // In <STRING> Recognized '\"',	Shortest string "\""
 BEGIN(INITIAL); 
 								   yystringval = stringval.ToString();
-								   yylval = new ConstantValue(yystringval);
+								   yylval = new StringValue(yystringval);
                                    return (int)Token.LITERAL;
             break;
         case 114: // In <STRING> Recognized '\\',	Shortest string "\\"
