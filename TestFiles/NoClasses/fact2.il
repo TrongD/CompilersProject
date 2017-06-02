@@ -6,17 +6,17 @@
 .maxstack 100
 ldarg.0
 ldc.i4 0
-beq Equal3
+beq L_01
 ldarg.0
 ldarg.0
 ldc.i4 1
 sub
 call int32 factorial(int32)
 mul
-br Exit3
-Equal3:
+br Exit1
+L_01:
 ldc.i4 1
-Exit3: 
+Exit1: 
 
 ret
 }

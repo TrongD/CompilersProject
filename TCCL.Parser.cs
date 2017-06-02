@@ -13,7 +13,15 @@ namespace ASTBuilder
         {
             GlobalVar.filename = filename;
             GlobalVar.PATH = Directory.GetCurrentDirectory() +"\\"+ filename + ".il";
-            this.Scanner = new TCCLScanner(File.OpenRead(filename + ".txt"));
+            try
+            {
+                this.Scanner = new TCCLScanner(File.OpenRead(filename + ".txt"));
+            }
+            catch(FileNotFoundException)
+            {
+                Console.WriteLine("Error opening file: " + filename + ".txt");
+                return;
+            }
             this.Parse();
             //   PrintTree();
             DoSemantics();
@@ -61,7 +69,6 @@ namespace ASTBuilder
                 }
             }
             visitor.Visit(CurrentSemanticValue);
-
         }
         //
         // Now the node factory methods

@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace ASTBuilder
 {
+    /******************************************/
+    /********Code Generation Visitor***********/
+    /******************************************/
     class GlobalVar
     {
         public static string PATH;
@@ -204,23 +207,20 @@ namespace ASTBuilder
             Identifier functionCall = (Identifier)node.Child.Child;
             AbstractNode list = node.Child.Sib;
             string s = "";
-            if (node.TypeRef.GetType() == typeof(ASTBuilder.StringTypeDescriptor))
+            if (functionCall.TypeRef.GetType() == typeof(ASTBuilder.MSCorLibTypeDescriptor)
+                &&node.TypeRef.GetType() == typeof(ASTBuilder.StringTypeDescriptor))
             {
                 list.Accept(this);
-                if (functionCall.Name == "WriteLine")
-                    s += "call void [mscorlib]System.Console::WriteLine(string)";
-                else if (functionCall.Name == "Write")
-                    s += "call void [mscorlib]System.Console::Write(string)";
                 using (FileStream fs = File.Open(GlobalVar.PATH, FileMode.Append))
                 {
                     using (StreamWriter sw = new StreamWriter(fs))
                     {
-                        sw.WriteLine(s);
+                        sw.WriteLine("call " + functionCall.TypeRef.type + functionCall.Name + "(string)");
                     }
                 }
             }
-            else if(node.TypeRef.GetType() == typeof(ASTBuilder.IntegerTypeDescriptor)
-                &&(functionCall.Name == "WriteLine"|| functionCall.Name == "Write"))
+            else if(functionCall.TypeRef.GetType() == typeof(ASTBuilder.MSCorLibTypeDescriptor)
+                &&node.TypeRef.GetType() == typeof(ASTBuilder.IntegerTypeDescriptor))
             {
                 using (FileStream fs = File.Open(GlobalVar.PATH, FileMode.Append))
                 {
@@ -250,7 +250,7 @@ namespace ASTBuilder
                 list = node.Child.Sib;
                 while (list != null)
                 {
-                    s += "int32";
+                    s += list.TypeRef.type;
                     list = list.Sib;
                     if (list != null)
                         s += ", ";
@@ -286,7 +286,22 @@ namespace ASTBuilder
         }
         public void VisitNode(BooleanExpression node)
         {
-            VisitChildren(node); 
+            VisitChildren(node);
+            using (FileStream fs = File.Open(GlobalVar.PATH, FileMode.Append))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    switch (node.GetType().ToString())
+                    {
+                        case ("ASTBuilder.Equals"): sw.Write("beq "); break;
+                        case ("ASTBuilder.GreaterThan"): sw.Write("bgt "); break;
+                        case ("ASTBuilder.LessThan"): sw.Write("blt "); break;
+                        case ("ASTBuilder.GreaterThanEquals"): sw.Write("bge "); break;
+                        case ("ASTBuilder.LessThanEquals"): sw.Write("ble "); break;
+                        case ("ASTBuilder.NotEquals"): sw.Write("not "); break;
+                    }
+                }
+            }         
         }
         public void VisitNode(Assign node)
         {
@@ -306,15 +321,7 @@ namespace ASTBuilder
             {
                 using (StreamWriter sw = new StreamWriter(fs))
                 {
-                    switch (expr1.GetType().ToString())
-                    {
-                        case ("ASTBuilder.Equals"): sw.Write("beq Equal"); break;
-                        case ("ASTBuilder.GreaterThan"): sw.Write("bgt GreaterThan"); break;
-                        case ("ASTBuilder.LessThan"): sw.Write("blt LessThan"); break;
-                        case ("ASTBuilder.GreaterThanEquals"): sw.Write("bge GreaterThanEquals"); break;
-                        case ("ASTBuilder.LessThanEquals"): sw.Write("ble LessThanEquals"); break;
-                    }
-                    sw.WriteLine(++ldlocCount);
+                    sw.WriteLine("L_0"+ ++ldlocCount);
                 }
             }
             expr3.Accept(this);
@@ -324,14 +331,7 @@ namespace ASTBuilder
                 {
 
                     sw.WriteLine("br Exit" + ldlocCount);
-                    switch (expr1.GetType().ToString())
-                    {
-                        case ("ASTBuilder.Equals"): sw.WriteLine("Equal" + ldlocCount+ ":"); break;
-                        case ("ASTBuilder.GreaterThan"): sw.WriteLine("GreaterThan" + ldlocCount + ":"); break;
-                        case ("ASTBuilder.LessThan"): sw.WriteLine("LessThan" + ldlocCount + ":"); break;
-                        case ("ASTBuilder.GreaterThanEquals"): sw.WriteLine("GreaterThanEquals" + ldlocCount + ":"); break;
-                        case ("ASTBuilder.LessThanEquals"): sw.WriteLine("LessThanEquals" + ldlocCount + ":"); break;
-                    }
+                    sw.WriteLine("L_0" + ldlocCount + ":");
                 }
             }
             expr2.Accept(this);
@@ -343,7 +343,6 @@ namespace ASTBuilder
                 }
             }
         }
-       
         public void VisitNode(IterationStatement node)
         {
             ldlocCount = 0;
@@ -363,14 +362,6 @@ namespace ASTBuilder
             {
                 using (StreamWriter sw = new StreamWriter(fs))
                 {
-                    switch (expr.GetType().ToString())
-                    {
-                        case ("ASTBuilder.Equals"): sw.Write("beq "); break;
-                        case ("ASTBuilder.GreaterThan"): sw.Write("bgt "); break;
-                        case ("ASTBuilder.LessThan"): sw.Write("blt "); break;
-                        case ("ASTBuilder.GreaterThanEquals"): sw.Write("bge "); break;
-                        case ("ASTBuilder.LessThanEquals"): sw.Write("ble "); break;
-                    }
                     sw.WriteLine("Body" + ++ldlocCount);
                     sw.WriteLine("ret");
                     sw.WriteLine("Body" + ldlocCount + ":");
@@ -417,14 +408,6 @@ namespace ASTBuilder
                     sw.WriteLine("stloc " + info.Location);
                 }
             }
-        }
-        public void VisitNode(LocalVariableDeclarationStatement node)
-        {
-
-        }
-        public void VisitNode(FieldVariableDeclaration node)
-        {
-
         }
     }
 }

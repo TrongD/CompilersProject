@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace ASTBuilder
 {
+    /******************************************/
+    /*Describes type of node for decorated AST*/
+    /******************************************/
     public abstract class TypeDescriptor
     {
         public string type;
@@ -15,6 +18,9 @@ namespace ASTBuilder
             Console.WriteLine("    " + this.GetType().ToString());
         }
     }
+    /******************************************/
+    /*********Basic Primitive Types************/
+    /******************************************/
     public class IntegerTypeDescriptor : TypeDescriptor
     {
         int value;
@@ -51,17 +57,25 @@ namespace ASTBuilder
             type = "void";
         }
     }
+
+    /********Temp Place holder for Java Language*************/
     public class JavaInternalTypeDescriptor : TypeDescriptor
     {
 
     }
+    /*****MSCoreLib Type Descriptor for mscorlib code generation*****/
     public class MSCorLibTypeDescriptor : TypeDescriptor
     {
-
+        public MSCorLibTypeDescriptor()
+        {
+            type = "void [mscorlib]System.Console::";
+        }
     }
+    /*****Error Type Descriptor*****/
     public class ErrorTypeDescriptor : TypeDescriptor
     {
     }
+    /*****Describes Specific Arrays for Array nodes*****/
     public class ArrayTypeDescriptor : TypeDescriptor
     {
         private TypeDescriptor elementType;
@@ -74,6 +88,7 @@ namespace ASTBuilder
         public TypeDescriptor ElementType { get { return elementType; } set { this.elementType = value; } }
         public TypeDescriptor Bounds { get { return bounds; } set { this.bounds = value; } }
     }
+    /*****Holds Symbol table for global and static variables*****/
     public class RecordTypeDescriptor : TypeDescriptor
     {
         private Hashtable fields;
@@ -83,6 +98,8 @@ namespace ASTBuilder
         }
         public Hashtable Fields { get { return fields; } set { this.fields = value; } }
     }
+    /*****Holds first parameter of a method*****/
+
     public class SignatureTypeDescriptor : TypeDescriptor
     {
         private AbstractNode firstParam;

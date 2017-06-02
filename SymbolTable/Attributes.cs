@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace ASTBuilder
 {
+    /****************************************************/
+    /*Information symbols held in nodes and symbol table*/
+    /****************************************************/
     public abstract class Attributes
     {
         protected TypeDescriptor typeRef;

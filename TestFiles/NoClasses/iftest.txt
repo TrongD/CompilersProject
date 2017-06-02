@@ -16,7 +16,6 @@
  
        if ( i == 10 )  j = i;
         else  WriteLine("In else part");
-	WriteLine(j);
  
     }
 

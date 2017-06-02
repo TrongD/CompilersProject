@@ -14,28 +14,24 @@ ldstr "TCCL if test"
 call void [mscorlib]System.Console::WriteLine(string)
 ldloc 0
 ldc.i4 10
-blt LessThan1
+blt L_03
 ldloc 1
 stloc 0
-br Exit1
-LessThan1:
+br Exit3
+L_03:
 ldstr "In then part"
 call void [mscorlib]System.Console::WriteLine(string)
-Exit1: 
+Exit3: 
 ldloc 0
 ldc.i4 10
-beq Equal2
+beq L_04
 ldstr "In else part"
 call void [mscorlib]System.Console::WriteLine(string)
-br Exit2
-Equal2:
+br Exit4
+L_04:
 ldloc 0
 stloc 1
-Exit2: 
-ldstr "{0}"
-ldloc 1
-box int32
-call void [mscorlib]System.Console::WriteLine(string, object) 
+Exit4: 
 
 ret
 }

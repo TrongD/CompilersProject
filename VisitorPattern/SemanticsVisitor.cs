@@ -14,6 +14,11 @@ namespace ASTBuilder
         // The subsequent call to VisitNode does dynamic lookup to find the
         // appropriate Version.
         protected static SymbolTable table = new SymbolTable();
+        public virtual void Visit(dynamic node)
+        {
+            this.VisitNode(node);
+        }
+        /*OBSOLETE CODE NOT USED*/
         protected static ClassAttributes currentClass = null;
         protected static MethodAttributes currentMethod = null;
 
@@ -33,11 +38,7 @@ namespace ASTBuilder
         {
             return currentMethod;
         }
-        public virtual void Visit(dynamic node)
-        {
-            this.VisitNode(node);
-        }
-
+       
         // Call this method to begin the semantic checking process
         public void CheckSemantics(AbstractNode node)
         {
@@ -70,6 +71,7 @@ namespace ASTBuilder
                 child = child.Sib;
             };
         }
+        //Starting Node of an AST
         public void VisitNode(CompilationUnit node)
         {
             table.incrNestLevel();
@@ -83,6 +85,7 @@ namespace ASTBuilder
                 child = child.Sib;
             };
         }
+        //Visit Identifier and find name in symbol table
         public virtual void VisitNode(Identifier node)
         {
             node.TypeRef = new ErrorTypeDescriptor();
@@ -96,9 +99,9 @@ namespace ASTBuilder
             {
                     node.AttributesRef = attr;
                     node.TypeRef = attr.TypeRef;
-
             }
         }
+        //Visit Assign and type check to make sure rhs can be assigned to lhs
         public virtual void VisitNode(Assign node)
         {
             LHSSemanticVisitor lhsVisitor = new LHSSemanticVisitor();
@@ -116,6 +119,7 @@ namespace ASTBuilder
                 node.TypeRef = new ErrorTypeDescriptor();
             }
         }
+        //check if lhs and rhs are the same and make node a boolean type
         public void VisitNode(BooleanExpression node)
         {
             AbstractNode expr1 = node.Child;
@@ -132,6 +136,7 @@ namespace ASTBuilder
                 node.TypeRef = new ErrorTypeDescriptor();
             }
         }
+        //check lhs and rhs are the same and assign node type based on lhs or rhs type
         public void VisitNode(ArithmeticExpression node)
         {
             AbstractNode expr1 = node.Child;
@@ -148,32 +153,29 @@ namespace ASTBuilder
                 node.TypeRef = new ErrorTypeDescriptor();
             }
         }
+        //if statement - check if children are correct and then do boolean check
         public void VisitNode(SelectionStatement node)
         {
             VisitChildren(node);
             BooleanCheck(node.Child);
         }
+        //loop statement - check if children are correct and then do boolean check
         public void VisitNode(IterationStatement node)
         {
             VisitChildren(node);
             BooleanCheck(node.Child);
         }
+        //make node Int type
         public void VisitNode(ConstantValue node)
         {
             node.TypeRef = table.lookup("INT").TypeRef;
         }
+        //make node string type
         public void VisitNode(StringValue node)
         {
             node.TypeRef = table.lookup("String").TypeRef;
         }
-        bool IsDataObject(Attributes attr)
-        {
-            if (attr.TypeRef.GetType() == typeof(ASTBuilder.IntegerTypeDescriptor) 
-                || attr.TypeRef.GetType() == typeof(ASTBuilder.BooleanTypeDescriptor)
-                || attr.TypeRef.GetType() == typeof(ASTBuilder.JavaInternalTypeDescriptor))
-                return true;
-            return false;
-        }
+        //check if two nodes based on types are assignable
         bool Assignable(TypeDescriptor attr1, TypeDescriptor attr2)
         {
             if (!(attr1.GetType() == typeof(ASTBuilder.IntegerTypeDescriptor))
@@ -188,6 +190,7 @@ namespace ASTBuilder
                 return false;
             return true;
         }
+        //check if type is a boolean or error type
         void BooleanCheck(AbstractNode node)
         {
             if ((node.TypeRef.GetType() != typeof(ASTBuilder.BooleanTypeDescriptor))
@@ -202,6 +205,7 @@ namespace ASTBuilder
         {
             this.VisitNode(node);
         }
+        //check if Identifier is declared in Symbol table and assignable
         public override void VisitNode(Identifier node)
         {
             SemanticsVisitor visitor = new SemanticsVisitor();
@@ -211,6 +215,7 @@ namespace ASTBuilder
                 node.AttributesRef = null;
             }
         }
+        //check if all Qualified Name names are in Symbol table 
         public void VisitNode(QualifiedName node)
         {
             AbstractNode name = node.Child;
@@ -238,7 +243,7 @@ namespace ASTBuilder
         {
             this.VisitNode(node);
         }
-
+        //check if field declaration (static int x) is declared in Symbol table and add if not
         public void VisitNode(FieldVariableDeclaration node)
         {
             AbstractNode mods = node.Child;
@@ -267,6 +272,7 @@ namespace ASTBuilder
                 node.TypeRef.PrintType();
             }
         }
+        //check parameter and declare in Symbol table
         public void VisitNode(Parameter node)
         {
             AbstractNode typeName =node.Child;
@@ -289,6 +295,7 @@ namespace ASTBuilder
             }
             idName = idName.Sib;
         }
+        //check if variable (int x) is declared in symbol table and add if not
         public void VisitNode(LocalVariableDeclarationStatement node)
         {
             AbstractNode typeName = node.Child;
@@ -314,6 +321,7 @@ namespace ASTBuilder
                 idName = idName.Sib;
             }
         }
+        //create class type descriptor, increase scope, and check body 
         public void VisitNode(ClassDeclaration node)
         {
             AbstractNode mods = node.Child;
@@ -346,6 +354,7 @@ namespace ASTBuilder
             ((ClassTypeDescriptor)attr.TypeRef).Names = table.decrNestLevel();
             SetCurrentClass(null);
         }
+        //define method attribute, increase scope, and check body 
         public void VisitNode(MethodDeclaration node)
         {
             AbstractNode mods = node.Child;
@@ -387,6 +396,7 @@ namespace ASTBuilder
         {
             this.VisitNode(node);
         }
+        //check if identifier is in symbol table and add if not
         public override void VisitNode(Identifier node)
         {
             string name = node.Name;
@@ -403,6 +413,7 @@ namespace ASTBuilder
                 node.AttributesRef = null;
             }
         }
+        //check if allnames are in symbol table and add identifier if not
         public void VisitNode(QualifiedName node)
         {
             AbstractNode name = node.Child;
@@ -413,6 +424,7 @@ namespace ASTBuilder
                 name = name.Sib;
             }  
         }
+        //check if primitive type is in symbol table and get type from tis attribute
         public void VisitNode(PrimitiveType node)
         {
             Attributes attr = table.lookup(node.Type);
