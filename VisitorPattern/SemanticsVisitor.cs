@@ -7,34 +7,7 @@ using System.Threading.Tasks;
 
 namespace ASTBuilder
 {
-    public class SemanticNodeVisitor : IReflectiveVisitor
-    {
-        public virtual void Visit(dynamic node)
-        {
-            this.VisitNode(node);
-        }
-        public virtual void VisitNode(AbstractNode node)
-        {
-            AbstractNode child = node.Child;
-            while (child != null)
-            {
-                child.Accept(this);
-                node.TypeRef = child.TypeRef;
-                child = child.Sib;
-            };
-        }
-        public virtual void VisitChildren(AbstractNode node)
-        {
-            AbstractNode child = node.Child;
-            while (child != null)
-            {
-                child.Accept(this);
-                node.TypeRef = child.TypeRef;
-                child = child.Sib;
-            };
-        }
-    }
-    public class SemanticsVisitor : SemanticNodeVisitor, IReflectiveVisitor
+    public class SemanticsVisitor : IReflectiveVisitor
     {
         // This method is the key to implenting the Reflective Visitor pattern
         // in C#, using the 'dynamic' type specification to accept any node type.
@@ -60,7 +33,7 @@ namespace ASTBuilder
         {
             return currentMethod;
         }
-        public override void Visit(dynamic node)
+        public virtual void Visit(dynamic node)
         {
             this.VisitNode(node);
         }
@@ -76,7 +49,7 @@ namespace ASTBuilder
             node.Accept(visitor);
         }
 
-        public override void VisitNode(AbstractNode node)
+        public virtual void VisitNode(AbstractNode node)
         {
             AbstractNode child = node.Child;
             TopDeclVisitor visitor = new TopDeclVisitor();
@@ -87,7 +60,16 @@ namespace ASTBuilder
                 child = child.Sib;
             };
         }
-
+        public virtual void VisitChildren(AbstractNode node)
+        {
+            AbstractNode child = node.Child;
+            while (child != null)
+            {
+                child.Accept(this);
+                node.TypeRef = child.TypeRef;
+                child = child.Sib;
+            };
+        }
         public void VisitNode(CompilationUnit node)
         {
             table.incrNestLevel();

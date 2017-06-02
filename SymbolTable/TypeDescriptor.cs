@@ -40,7 +40,7 @@ namespace ASTBuilder
         bool value;
         public BooleanTypeDescriptor()
         {
-            type = "bool";
+            type = "ldc.i4";
         }
         public bool Value { get { return value; } set { this.value = value; } }
     }

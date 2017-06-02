@@ -10,6 +10,8 @@ namespace ASTBuilder
     public abstract class Attributes
     {
         protected TypeDescriptor typeRef;
+        protected int location;
+        protected string codeType;
         public Attributes(TypeDescriptor typeRef = null)
         {
             this.typeRef = typeRef;
@@ -18,6 +20,16 @@ namespace ASTBuilder
         {
             get { return typeRef; }
             set { this.typeRef = value; }
+        }
+        public int Location
+        {
+            get { return location; }
+            set { this.location = value; }
+        }
+        public string CodeType
+        {
+            get { return codeType; }
+            set { this.codeType = value; }
         }
     }
     public class VariableAttributes : Attributes

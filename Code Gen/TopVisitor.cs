@@ -7,17 +7,6 @@ using System.Threading.Tasks;
 
 namespace ASTBuilder
 {
-    public class LocalStore
-    {
-        public string type;
-        public int loc;
-        public LocalStore(string type, int loc)
-        {
-            this.type = type;
-            this.loc = loc;
-        }
-    } 
-
     class GlobalVar
     {
         public static string PATH;
@@ -27,7 +16,6 @@ namespace ASTBuilder
     {
         public static int ldlocCount = 0;
         public static int stlocCount = 0;
-        public static Dictionary<string, LocalStore> storeLocs = new Dictionary<string, LocalStore>();
         public virtual void Visit(dynamic node)
         {
             this.VisitNode(node);
@@ -61,7 +49,6 @@ namespace ASTBuilder
         }
         public void VisitNode(CompilationUnit node)
         {
-            storeLocs = new Dictionary<string, LocalStore>();
             VisitChildren(node);
         }
         public void VisitNode(ClassDeclaration node)
@@ -123,7 +110,6 @@ namespace ASTBuilder
                             AbstractNode type = param.Child;
                             Identifier paramName = (Identifier)type.Sib;
                             s += type.TypeRef.type;
-                            storeLocs.Add(paramName.Name, new LocalStore("param",stlocCount++));
                             param = param.Sib;
                             if (param != null)
                                 s += ", ";
@@ -136,12 +122,12 @@ namespace ASTBuilder
                         sw.WriteLine(".entrypoint");
                     }
                     sw.WriteLine(".maxstack 100");
-                    sw.WriteLine(".locals init (int32, int32)");
                     if (((SignatureTypeDescriptor)attr.Signature).Parameters != null)
                     {
                         param = ((SignatureTypeDescriptor)attr.Signature).Parameters.Child;
                         while (param != null)
                         {
+                            param.Accept(this);
                             param = param.Sib;
                         }
                     }
@@ -156,7 +142,12 @@ namespace ASTBuilder
                     sw.WriteLine("\nret\n}");
                 }
             }
-
+        }
+        public void VisitNode(Parameter node)
+        {
+            Attributes info = node.Child.Sib.AttributesRef;
+            info.Location = stlocCount++;
+            info.CodeType = "param";
         }
     }
     class MethodBodyVisitor : NodeVisitor
@@ -196,13 +187,13 @@ namespace ASTBuilder
                     sw.Write(".locals init (");
                     while (dcls != null)
                     {
-                        storeLocs.Add(dcls.Name,new LocalStore("dcl", stlocCount++));
+                        dcls.AttributesRef.Location = stlocCount++;
                         sw.Write(type);
                         dcls = (Identifier)dcls.Sib;
                         if (dcls != null)
                             sw.Write(", ");
                     }
-                    sw.WriteLine(", " + type + ", " + type + ")");
+                    sw.WriteLine(")");
 
                 }
             }
@@ -243,11 +234,6 @@ namespace ASTBuilder
                 {
                     using (StreamWriter sw = new StreamWriter(fs))
                     {
-                        if (list.GetType().IsSubclassOf(typeof(ASTBuilder.ArithmeticExpression)))
-                        {
-                            sw.WriteLine("stloc " + (stlocCount));
-                            sw.WriteLine("ldloc " + (stlocCount));
-                        }
                         sw.WriteLine("box int32");
                         sw.WriteLine("call void [mscorlib]System.Console::WriteLine(string, object) ");
                     }
@@ -259,8 +245,7 @@ namespace ASTBuilder
                 {
                     list.Accept(this);
                     list = list.Sib;
-                }
-                    
+                } 
                 s += "call " + functionCall.TypeRef.type +" "+ functionCall.Name + "(";
                 list = node.Child.Sib;
                 while (list != null)
@@ -298,11 +283,10 @@ namespace ASTBuilder
                     }
                 }
             }
-           
         }
         public void VisitNode(BooleanExpression node)
         {
-
+            VisitChildren(node); 
         }
         public void VisitNode(Assign node)
         {
@@ -314,11 +298,93 @@ namespace ASTBuilder
         }
         public void VisitNode(SelectionStatement node)
         {
+            AbstractNode expr1 = node.Child;
+            AbstractNode expr2 = expr1.Sib;
+            AbstractNode expr3 = expr2.Sib;
+            expr1.Accept(this);
+            using (FileStream fs = File.Open(GlobalVar.PATH, FileMode.Append))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    switch (expr1.GetType().ToString())
+                    {
+                        case ("ASTBuilder.Equals"): sw.Write("beq Equal"); break;
+                        case ("ASTBuilder.GreaterThan"): sw.Write("bgt GreaterThan"); break;
+                        case ("ASTBuilder.LessThan"): sw.Write("blt LessThan"); break;
+                        case ("ASTBuilder.GreaterThanEquals"): sw.Write("bge GreaterThanEquals"); break;
+                        case ("ASTBuilder.LessThanEquals"): sw.Write("ble LessThanEquals"); break;
+                    }
+                    sw.WriteLine(++ldlocCount);
+                }
+            }
+            expr3.Accept(this);
+            using (FileStream fs = File.Open(GlobalVar.PATH, FileMode.Append))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
 
+                    sw.WriteLine("br Exit" + ldlocCount);
+                    switch (expr1.GetType().ToString())
+                    {
+                        case ("ASTBuilder.Equals"): sw.WriteLine("Equal" + ldlocCount+ ":"); break;
+                        case ("ASTBuilder.GreaterThan"): sw.WriteLine("GreaterThan" + ldlocCount + ":"); break;
+                        case ("ASTBuilder.LessThan"): sw.WriteLine("LessThan" + ldlocCount + ":"); break;
+                        case ("ASTBuilder.GreaterThanEquals"): sw.WriteLine("GreaterThanEquals" + ldlocCount + ":"); break;
+                        case ("ASTBuilder.LessThanEquals"): sw.WriteLine("LessThanEquals" + ldlocCount + ":"); break;
+                    }
+                }
+            }
+            expr2.Accept(this);
+            using (FileStream fs = File.Open(GlobalVar.PATH, FileMode.Append))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    sw.WriteLine("Exit" + ldlocCount + ": ");
+                }
+            }
         }
+       
         public void VisitNode(IterationStatement node)
         {
+            ldlocCount = 0;
+            int exprCount;
+            AbstractNode expr = node.Child;
+            AbstractNode stmt = expr.Sib;
+            using (FileStream fs = File.Open(GlobalVar.PATH, FileMode.Append))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    sw.WriteLine("Expr" + ++ldlocCount + ":");
+                    exprCount = ldlocCount;
+                }
+            }
+            expr.Accept(this);
+            using (FileStream fs = File.Open(GlobalVar.PATH, FileMode.Append))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
+                    switch (expr.GetType().ToString())
+                    {
+                        case ("ASTBuilder.Equals"): sw.Write("beq "); break;
+                        case ("ASTBuilder.GreaterThan"): sw.Write("bgt "); break;
+                        case ("ASTBuilder.LessThan"): sw.Write("blt "); break;
+                        case ("ASTBuilder.GreaterThanEquals"): sw.Write("bge "); break;
+                        case ("ASTBuilder.LessThanEquals"): sw.Write("ble "); break;
+                    }
+                    sw.WriteLine("Body" + ++ldlocCount);
+                    sw.WriteLine("ret");
+                    sw.WriteLine("Body" + ldlocCount + ":");
+                }
+            }
+            stmt.Accept(this);
+            using (FileStream fs = File.Open(GlobalVar.PATH, FileMode.Append))
+            {
+                using (StreamWriter sw = new StreamWriter(fs))
+                {
 
+                    sw.WriteLine("br Expr" + exprCount);
+                }
+            }
         }
         public void VisitNode(Identifier node)
         {
@@ -326,11 +392,11 @@ namespace ASTBuilder
             {
                 using (StreamWriter sw = new StreamWriter(fs))
                 {
-                    LocalStore info = storeLocs[node.Name];
-                    if (info.type == "param")
-                        sw.WriteLine("ldarg." + info.loc);
-                    else if (info.type == "dcl")
-                        sw.WriteLine("ldloc " + info.loc);
+                    Attributes info = node.AttributesRef;
+                    if(info.CodeType == "param")
+                        sw.WriteLine("ldarg." + info.Location);
+                    else
+                        sw.WriteLine("ldloc " + info.Location);
                 }
             }
         }
@@ -347,8 +413,8 @@ namespace ASTBuilder
             {
                 using (StreamWriter sw = new StreamWriter(fs))
                 {
-                    LocalStore info = storeLocs[node.Name];
-                    sw.WriteLine("stloc " + info.loc);
+                    Attributes info = node.AttributesRef;
+                    sw.WriteLine("stloc " + info.Location);
                 }
             }
         }

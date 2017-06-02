@@ -1,25 +1,6 @@
 //Generated Code in CIL
 .assembly extern mscorlib {} 
-.assembly fact2 {}
-.method public static int32 factorial (int32)
-{
-.maxstack 100
-ldarg.0
-ldc.i4 0
-beq Equal3
-ldarg.0
-ldarg.0
-ldc.i4 1
-sub
-call int32 factorial(int32)
-mul
-br Exit3
-Equal3:
-ldc.i4 1
-Exit3: 
-
-ret
-}
+.assembly loop {}
 .method public static void main ()
 {
 .entrypoint
@@ -27,17 +8,16 @@ ret
 .locals init (int32, int32)
 ldc.i4 0
 stloc 0
-ldstr "TCCL recursive factorial test"
+ldc.i4 1
+stloc 1
+ldstr "Beginning loop test"
 call void [mscorlib]System.Console::WriteLine(string)
 Expr1:
 ldloc 0
-ldc.i4 15
+ldc.i4 10
 blt Body2
 ret
 Body2:
-ldloc 0
-call int32 factorial(int32)
-stloc 1
 ldstr "{0}"
 ldloc 1
 box int32
@@ -46,6 +26,10 @@ ldloc 0
 ldc.i4 1
 add
 stloc 0
+ldloc 1
+ldloc 0
+mul
+stloc 1
 br Expr1
 
 ret

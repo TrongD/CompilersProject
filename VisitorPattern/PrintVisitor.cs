@@ -74,6 +74,11 @@ namespace ASTBuilder
             Console.Write("<" + node.ClassName() + ">: ");
             Console.Write(node.Value);
         }
+        public void VisitNode(StringValue node)
+        {
+            Console.Write("<" + node.ClassName() + ">: ");
+            Console.Write(node.Value);
+        }
         public void VisitNode(PrimitiveType node)
         {
             Console.Write("<" + node.ClassName() + ">: ");

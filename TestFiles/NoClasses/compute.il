@@ -6,11 +6,10 @@
 .entrypoint
 .maxstack 100
 .locals init (int32, int32)
-.locals init (int32, int32, int32, int32)
 ldc.i4 3
 ldc.i4 4
 add
-stloc ASTBuilder.LocalStore
+stloc 1
 ldstr "Value of x = "
 call void [mscorlib]System.Console::Write(string)
 ldstr "{0}"
@@ -20,7 +19,7 @@ call void [mscorlib]System.Console::WriteLine(string, object)
 ldloc 1
 ldc.i4 5
 sub
-stloc ASTBuilder.LocalStore
+stloc 0
 ldstr "Value of w = "
 call void [mscorlib]System.Console::Write(string)
 ldstr "{0}"
@@ -37,8 +36,6 @@ ldc.i4 12
 ldloc 0
 div
 add
-stloc 2
-ldloc 2
 box int32
 call void [mscorlib]System.Console::WriteLine(string, object) 
 
